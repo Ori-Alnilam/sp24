@@ -1,5 +1,4 @@
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class MapExercises {
     /** Returns a map from every lower case letter to the number corresponding to that letter, where 'a' is
@@ -7,7 +6,12 @@ public class MapExercises {
      */
     public static Map<Character, Integer> letterToNum() {
         // TODO: Fill in this function.
-        return null;
+        Map<Character, Integer> alphabetMap = new TreeMap<>();
+        for (int i = 0; i < 26; i++) {
+            char letter = (char) ('a' + i);
+            alphabetMap.put(letter, i + 1);
+        }
+        return alphabetMap;
     }
 
     /** Returns a map from the integers in the list to their squares. For example, if the input list
@@ -15,12 +19,21 @@ public class MapExercises {
      */
     public static Map<Integer, Integer> squares(List<Integer> nums) {
         // TODO: Fill in this function.
-        return null;
+        Map<Integer, Integer> squaresMap = new TreeMap<>();
+        for (Integer number : nums) {
+            squaresMap.put(number, number * number);
+        }
+        return squaresMap;
     }
 
     /** Returns a map of the counts of all words that appear in a list of words. */
     public static Map<String, Integer> countWords(List<String> words) {
         // TODO: Fill in this function.
-        return null;
+        Map<String, Integer> countWordsMap = new TreeMap<>();
+        for (String word : words) {
+            int count = Collections.frequency(words, word);
+            countWordsMap.put(word, count);
+        }
+        return countWordsMap;
     }
 }
