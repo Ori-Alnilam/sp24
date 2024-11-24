@@ -85,6 +85,13 @@ public class Model {
      * */
     public boolean emptySpaceExists() {
         // TODO: Task 2. Fill in this function.
+        for (int x = 0; x < size(); x++) {
+            for (int y = 0; y < size(); y++) {
+                if (board.tile(x, y) == null) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -95,6 +102,14 @@ public class Model {
      */
     public boolean maxTileExists() {
         // TODO: Task 3. Fill in this function.
+        for (int x = 0; x < size(); x++) {
+            for (int y = 0; y < size(); y++) {
+                Tile maxTile = board.tile(x, y);
+                if (maxTile != null && maxTile.value() == MAX_PIECE) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -106,6 +121,34 @@ public class Model {
      */
     public boolean atLeastOneMoveExists() {
         // TODO: Fill in this function.
+        if (emptySpaceExists()) {
+            return true;
+        } else return hasAdjacentTilesWithSameValue();
+    }
+
+    /** Return true if there are two adjacent tiles with the same value.*/
+    public boolean hasAdjacentTilesWithSameValue() {
+        for (int x = 0; x < size(); x++) {
+            for (int y = 0; y < size(); y++) {
+                Tile t = board.tile(x, y);
+                for (int i = x - 1; i <= x + 1; i++) {
+                    if (i < 0 || i == x || i > size() - 1) {
+                        continue;
+                    }
+                    if (t.value() == board.tile(i, y).value()) {
+                        return true;
+                    }
+                }
+                for (int i = y - 1; i <= y + 1; i++) {
+                    if (i < 0 || i == y || i > size() - 1) {
+                        continue;
+                    }
+                    if (t.value() == board.tile(x, i).value()) {
+                        return true;
+                    }
+                }
+            }
+        }
         return false;
     }
 
@@ -129,6 +172,7 @@ public class Model {
         int targetY = y;
 
         // TODO: Tasks 5, 6, and 10. Fill in this function.
+
     }
 
     /** Handles the movements of the tilt in column x of the board
