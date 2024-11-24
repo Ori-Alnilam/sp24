@@ -172,7 +172,17 @@ public class Model {
         int targetY = y;
 
         // TODO: Tasks 5, 6, and 10. Fill in this function.
-
+        while (targetY < size()) {
+            if (targetY + 1 >= size()) {
+                break;
+            }
+            Tile nextTile = board.tile(x, targetY + 1);
+            if (nextTile != null && nextTile.value() != currTile.value()) {
+                break;
+            }
+            targetY++;
+        }
+        board.move(x, targetY, currTile);
     }
 
     /** Handles the movements of the tilt in column x of the board
