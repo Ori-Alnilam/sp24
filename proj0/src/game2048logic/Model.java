@@ -154,7 +154,6 @@ public class Model {
 
     /**
      * Moves the tile at position (x, y) as far up as possible.
-     *
      * Rules for Tilt:
      * 1. If two Tiles are adjacent in the direction of motion and have
      *    the same value, they are merged into one Tile of twice the original
@@ -177,12 +176,22 @@ public class Model {
                 break;
             }
             Tile nextTile = board.tile(x, targetY + 1);
-            if (nextTile != null && nextTile.value() != currTile.value()) {
-                break;
+            if (nextTile != null ) {
+                if (nextTile.value() != myValue) {
+                    break;
+                } else if (nextTile.wasMerged()) {
+                    break;
+                }
             }
             targetY++;
         }
-        board.move(x, targetY, currTile);
+        if (targetY != y) {
+            Tile targetTile = board.tile(x, targetY);
+            board.move(x, targetY, currTile);
+            if (targetTile != null && board.tile(x, targetY).wasMerged()) {
+                score = score + myValue + targetTile.value();
+            }
+        }
     }
 
     /** Handles the movements of the tilt in column x of the board
@@ -201,6 +210,11 @@ public class Model {
 
     public void tilt(Side side) {
         // TODO: Tasks 8 and 9. Fill in this function.
+        board.setViewingPerspective(side);
+        for (int c = 0; c < size(); c++) {
+            tiltColumn(c);
+        }
+        board.setViewingPerspective(Side.NORTH);
     }
 
     /** Tilts every column of the board toward SIDE.

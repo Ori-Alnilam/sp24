@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
 import static com.google.common.truth.Truth.assertWithMessage;
-import static game2048logic.TestUtils.checkTilt;;
+import static game2048logic.TestUtils.checkTilt;
 
 @Timeout(value = 60, threadMode = Timeout.ThreadMode.SEPARATE_THREAD)
 public class TestMultipleMoves {
