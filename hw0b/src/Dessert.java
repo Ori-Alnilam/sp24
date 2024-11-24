@@ -1,5 +1,3 @@
-import java.awt.datatransfer.SystemFlavorMap;
-
 public class Dessert {
     public int flavor;
     public int price;
