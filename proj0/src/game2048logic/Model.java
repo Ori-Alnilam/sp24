@@ -123,36 +123,33 @@ public class Model {
         // TODO: Fill in this function.
         if (emptySpaceExists()) {
             return true;
-        } else return hasAdjacentTilesWithSameValue();
+        } else return hasAdjacentTilesWithSameValue(); // 只需在没有空格子时检查是否有相邻的等值方块
     }
 
-    /** Return true if there are two adjacent tiles with the same value.*/
+    /** Return true if there are two adjacent tiles with the same value.
+     * 函数调用时的条件句保证了此函数只会在没有空格子时调用
+     * （有空时，检查是否有相邻等值方块也没必要）
+     * 因此这里直接t.value(), 而不考虑t == null
+     * 只需与右方和上方的格子比较，因为遍历过程中左方和下方都比过了
+     * */
     public boolean hasAdjacentTilesWithSameValue() {
-        for (int x = 0; x < size(); x++) {
-            for (int y = 0; y < size(); y++) {
-                Tile t = board.tile(x, y);
-                for (int i = x - 1; i <= x + 1; i++) {
-                    if (i < 0 || i == x || i > size() - 1) {
-                        continue;
-                    }
-                    if (t.value() == board.tile(i, y).value()) {
-                        return true;
-                    }
+        for (int c = 0; c < size(); c++) {
+            for (int r = 0; r < size(); r++) {
+                Tile t = board.tile(c, r);
+                // 检查右边相邻格子是否相等
+                if (c + 1 < size() && t.value() == board.tile(c + 1, r).value()) {
+                    return true;
                 }
-                for (int i = y - 1; i <= y + 1; i++) {
-                    if (i < 0 || i == y || i > size() - 1) {
-                        continue;
-                    }
-                    if (t.value() == board.tile(x, i).value()) {
-                        return true;
-                    }
+                // 检查上方相邻格子
+                if (r + 1 < size() && t.value() == board.tile(c, r + 1).value()) {
+                    return true;
                 }
             }
         }
         return false;
     }
 
-    /**
+    /** 单个方块向上移动
      * Moves the tile at position (x, y) as far up as possible.
      * Rules for Tilt:
      * 1. If two Tiles are adjacent in the direction of motion and have
@@ -171,36 +168,39 @@ public class Model {
         int targetY = y;
 
         // TODO: Tasks 5, 6, and 10. Fill in this function.
-        while (targetY < size()) {
-            if (targetY + 1 >= size()) {
-                break;
-            }
+        // 向上寻找最远可移动的目标位置
+        while (targetY + 1 < size()) {
             Tile nextTile = board.tile(x, targetY + 1);
             if (nextTile != null ) {
-                if (nextTile.value() != myValue) {
-                    break;
-                } else if (nextTile.wasMerged()) {
+                if (nextTile.value() != myValue || nextTile.wasMerged()) {
+                    // 下一个方块值不相等或已经合并过，则停止
                     break;
                 }
             }
+            // 下个方块为空，或值相等（未合并），目标位置则前进
             targetY++;
         }
+
+        // 目标位置发生了改变，则进行移动
         if (targetY != y) {
-            Tile targetTile = board.tile(x, targetY);
             board.move(x, targetY, currTile);
-            if (targetTile != null && board.tile(x, targetY).wasMerged()) {
-                score = score + myValue + targetTile.value();
+            // 如果发生合并，更新分数
+            Tile mergeTile = board.tile(x, targetY); // 合并后的方块
+            if (board.tile(x, targetY).wasMerged()) {
+                score = score + mergeTile.value();
             }
         }
     }
 
-    /** Handles the movements of the tilt in column x of the board
+    /** 单列向上移动
+     * Handles the movements of the tilt in column x of the board
      * by moving every tile in the column as far up as possible.
      * The viewing perspective has already been set,
      * so we are tilting the tiles in this column up.
      * */
     public void tiltColumn(int x) {
         // TODO: Task 7. Fill in this function.
+        // 先上后下的顺序调用moveTileUpAsFarAsPossible()移动方块
         for (int r = size() - 1; r >= 0; r--) {
             if (board.tile(x, r) != null) {
                 moveTileUpAsFarAsPossible(x, r);
@@ -208,6 +208,8 @@ public class Model {
         }
     }
 
+    /** 根据指定方向，所有列（整个板）移动
+     */
     public void tilt(Side side) {
         // TODO: Tasks 8 and 9. Fill in this function.
         board.setViewingPerspective(side);
@@ -220,7 +222,7 @@ public class Model {
     /** Tilts every column of the board toward SIDE.
      */
     public void tiltWrapper(Side side) {
-        board.resetMerged();
+        board.resetMerged(); // 每次整个板移动前，重置合并状态
         tilt(side);
     }
 
